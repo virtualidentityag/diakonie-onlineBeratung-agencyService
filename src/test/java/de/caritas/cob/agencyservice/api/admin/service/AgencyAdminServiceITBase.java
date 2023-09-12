@@ -15,14 +15,17 @@ import de.caritas.cob.agencyservice.api.model.UpdateAgencyDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyRepository;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class AgencyAdminServiceITBase {
 
   @Autowired protected AgencyAdminService agencyAdminService;
   @Autowired protected AgencyRepository agencyRepository;
+  @MockBean protected AuthenticatedUser authenticatedUser;
 
   public void saveAgency_Should_PersistsAgency() {
 

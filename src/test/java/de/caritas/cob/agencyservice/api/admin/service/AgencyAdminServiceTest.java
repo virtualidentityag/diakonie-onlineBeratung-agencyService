@@ -34,6 +34,7 @@ import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.api.repository.agency.AgencyTenantUnawareRepository;
 import de.caritas.cob.agencyservice.api.repository.agency.DataProtectionResponsibleEntity;
 import de.caritas.cob.agencyservice.api.service.AppointmentService;
+import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.util.JsonConverter;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,9 @@ class AgencyAdminServiceTest {
 
   @Mock
   private Logger logger;
+
+  @Mock
+  AuthenticatedUser authenticatedUser;
 
   @Captor private ArgumentCaptor<Agency> agencyArgumentCaptor;
 
