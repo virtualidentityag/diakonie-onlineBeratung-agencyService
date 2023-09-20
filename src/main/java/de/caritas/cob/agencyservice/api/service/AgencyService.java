@@ -100,7 +100,7 @@ public class AgencyService {
 
   public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
       Optional<Integer> topicId) {
-    return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty());
+    return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty(), Optional.empty());
   }
 
   /**
@@ -113,7 +113,7 @@ public class AgencyService {
    */
   public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
       Optional<Integer> topicId,
-      Optional<Integer> age, Optional<String> gender) {
+      Optional<Integer> age, Optional<String> gender, Optional<String> counsellingRelation) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
@@ -123,7 +123,7 @@ public class AgencyService {
     }
 
     var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
-        age, gender);
+        age, gender, counsellingRelation);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
@@ -142,7 +142,7 @@ public class AgencyService {
 
   private List<Agency> findAgencies(String postCode, Optional<Integer> consultingTypeId,
       Optional<Integer> optionalTopicId, Optional<Integer> age,
-      Optional<String> gender) {
+      Optional<String> gender, Optional<String> counsellingRelation) {
 
     AgencySearch agencySearch = AgencySearch.builder()
         .postCode(postCode)
@@ -150,6 +150,7 @@ public class AgencyService {
         .topicId(optionalTopicId)
         .age(age)
         .gender(gender)
+        .counsellingRelation(counsellingRelation)
         .build();
 
     if (demographicsFeatureEnabled) {
@@ -171,6 +172,7 @@ public class AgencyService {
               agencySearch.getPostCode().length(), agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getAge().orElse(null),
               agencySearch.getGender().orElse(null),
+              agencySearch.getCounsellingRelation().orElse(null),
               TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
@@ -233,6 +235,7 @@ public class AgencyService {
               agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getTopicId().orElseThrow(),
               agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
+              agencySearch.getCounsellingRelation().orElse(null),
               TenantContext.getCurrentTenant());
 
     } catch (DataAccessException ex) {

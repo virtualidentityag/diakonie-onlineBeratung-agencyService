@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 public class AgencyServiceITBase {
 
@@ -40,7 +40,7 @@ public class AgencyServiceITBase {
     String postCode = "88662";
 
     List<FullAgencyResponseDTO> resultAgencies = agencyService
-        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty(), Optional.empty(), Optional.empty());
+        .getAgencies(postCode, CONSULTING_TYPE_PREGNANCY, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
     assertThat(resultAgencies, hasSize(1));
     FullAgencyResponseDTO resultAgency = resultAgencies.get(0);
