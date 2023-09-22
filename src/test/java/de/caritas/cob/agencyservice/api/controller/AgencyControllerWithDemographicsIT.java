@@ -16,7 +16,8 @@ import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
-import javax.transaction.Transactional;
+
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
