@@ -3,6 +3,8 @@ package de.caritas.cob.agencyservice.api.repository.agency;
 import de.caritas.cob.agencyservice.api.repository.TenantAware;
 import de.caritas.cob.agencyservice.api.repository.agencypostcoderange.AgencyPostcodeRange;
 import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.time.LocalDateTime;
 import java.util.List;
 import jakarta.persistence.Convert;
@@ -118,6 +120,22 @@ public class Agency implements TenantAware {
   @Column(name = "update_date", nullable = false)
   private LocalDateTime updateDate;
 
+  @Column(name = "data_protection_responsible_entity", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private DataProtectionResponsibleEntity dataProtectionResponsibleEntity;
+
+
+  @Column(name = "data_protection_officer_contact", nullable = false)
+  private String dataProtectionOfficerContactData;
+
+  @Column(name = "data_protection_alternative_contact", nullable = false)
+  private String dataProtectionAlternativeContactData;
+
+  @Column(name = "data_protection_agency_contact", nullable = false)
+  private String dataProtectionAgencyResponsibleContactData;
+
+
+
   @OneToMany(targetEntity = AgencyPostcodeRange.class, mappedBy = "agency", fetch = FetchType.LAZY)
   private List<AgencyPostcodeRange> agencyPostcodeRanges;
 
@@ -134,6 +152,9 @@ public class Agency implements TenantAware {
 
   @Column(name = "counselling_relations")
   private String counsellingRelations;
+
+  @Column(name = "agency_logo")
+  private String agencyLogo;
 
   @Transient
   public boolean hasAnyDemographicsAttributes() {

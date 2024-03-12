@@ -4,6 +4,7 @@ package de.caritas.cob.agencyservice.api.service;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
+import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.api.admin.service.agency.DemographicsConverter;
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.BadRequestException;
@@ -19,12 +20,12 @@ import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
+import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,10 @@ public class AgencyService {
   private final @NonNull TenantService tenantService;
   private final @NonNull DemographicsConverter demographicsConverter;
 
+  private final @NonNull CentralDataProtectionTemplateService centralDataProtectionTemplateService;
+
+  private final @NonNull ApplicationSettingsService applicationSettingsService;
+
   @Value("${feature.topics.enabled}")
   private boolean topicsFeatureEnabled;
 
@@ -73,7 +78,7 @@ public class AgencyService {
   public List<AgencyResponseDTO> getAgencies(List<Long> agencyIds) {
     return getAgencyRepositoryForSearch().findByIdIn(agencyIds).stream()
         .map(this::convertToAgencyResponseDTO)
-        .collect(Collectors.toList());
+        .toList();
   }
 
 
@@ -89,7 +94,7 @@ public class AgencyService {
 
       return agencyRepository.findByConsultingTypeId(consultingTypeId).stream()
           .map(this::convertToAgencyResponseDTO)
-          .collect(Collectors.toList());
+          .toList();
 
     } catch (MissingConsultingTypeException ex) {
       throw new BadRequestException(
@@ -98,7 +103,7 @@ public class AgencyService {
   }
 
 
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
+  public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode, int consultingTypeId,
       Optional<Integer> topicId) {
     return getAgencies(postCode, consultingTypeId, topicId, Optional.empty(), Optional.empty(), Optional.empty());
   }
@@ -111,36 +116,40 @@ public class AgencyService {
    * @param consultingTypeId the consulting type used for filtering agencies
    * @return a list containing regarding agencies
    */
-  public List<FullAgencyResponseDTO> getAgencies(String postCode, int consultingTypeId,
+  public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode,
+      Integer consultingTypeId,
       Optional<Integer> topicId,
       Optional<Integer> age, Optional<String> gender, Optional<String> counsellingRelation) {
 
     var consultingTypeSettings = retrieveConsultingTypeSettings(
         consultingTypeId);
-
-    if (doesPostCodeNotMatchMinSize(postCode, consultingTypeSettings)) {
+    if (postCode.isPresent() && doesPostCodeNotMatchMinSize(postCode.get(),
+        consultingTypeSettings)) {
       return Collections.emptyList();
     }
+
 
     var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
         age, gender, counsellingRelation);
     Collections.shuffle(agencies);
     var agencyResponseDTOs = agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
-        .collect(Collectors.toList());
+        .toList();
+
+    var mutableResponseDTO = Lists.newArrayList(agencyResponseDTOs);
 
     if (agencyResponseDTOs.isEmpty()) {
-      addWhiteSpotAgency(consultingTypeSettings, agencyResponseDTOs);
+      addWhiteSpotAgency(consultingTypeSettings, mutableResponseDTO);
     }
 
-    return agencyResponseDTOs;
+    return mutableResponseDTO;
   }
 
   private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {
     return multitenancyWithSingleDomain ? Optional.empty() : Optional.of(consultingTypeId);
   }
 
-  private List<Agency> findAgencies(String postCode, Optional<Integer> consultingTypeId,
+  private List<Agency> findAgencies(Optional<String> postCode, Optional<Integer> consultingTypeId,
       Optional<Integer> optionalTopicId, Optional<Integer> age,
       Optional<String> gender, Optional<String> counsellingRelation) {
 
@@ -168,8 +177,8 @@ public class AgencyService {
   private List<Agency> findAgencies(AgencySearch agencySearch) {
     try {
       return getAgencyRepositoryForSearch()
-          .searchWithoutTopic(agencySearch.getPostCode(),
-              agencySearch.getPostCode().length(), agencySearch.getConsultingTypeId().orElse(null),
+          .searchWithoutTopic(agencySearch.getPostCode().orElse(null),
+              agencySearch.getPostCode().orElse("").length(), agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getAge().orElse(null),
               agencySearch.getGender().orElse(null),
               agencySearch.getCounsellingRelation().orElse(null),
@@ -231,7 +240,7 @@ public class AgencyService {
   private List<Agency> findAgenciesWithTopic(AgencySearch agencySearch) {
     try {
       return getAgencyRepositoryForSearch()
-          .searchWithTopic(agencySearch.getPostCode(), agencySearch.getPostCode().length(),
+          .searchWithTopic(agencySearch.getPostCode().orElse(null), agencySearch.getPostCode().orElse("").length(),
               agencySearch.getConsultingTypeId().orElse(null),
               agencySearch.getTopicId().orElseThrow(),
               agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
@@ -277,7 +286,20 @@ public class AgencyService {
     }
   }
 
+  private RestrictedTenantDTO getTenantDataRelevantForFeatureToggles(Agency agency) {
+    if (multitenancyWithSingleDomain) {
+      String mainTenantSubdomain = applicationSettingsService.getApplicationSettings()
+          .getMainTenantSubdomainForSingleDomainMultitenancy().getValue();
+      return tenantService.getRestrictedTenantDataBySubdomain(mainTenantSubdomain);
+    } else {
+
+      return agency.getTenantId() != null ? tenantService.getRestrictedTenantDataByTenantId(
+          agency.getTenantId()) : null;
+    }
+  }
+
   private AgencyResponseDTO convertToAgencyResponseDTO(Agency agency) {
+    String renderedAgencySpecificPrivacy = getRenderedAgencySpecificPrivacy(agency);
     return new AgencyResponseDTO()
         .id(agency.getId())
         .name(agency.getName())
@@ -288,7 +310,21 @@ public class AgencyService {
         .offline(agency.isOffline())
         .tenantId(agency.getTenantId())
         .consultingType(agency.getConsultingTypeId())
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(Collectors.toList()));
+        .agencySpecificPrivacy(renderedAgencySpecificPrivacy)
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .agencyLogo(agency.getAgencyLogo());
+  }
+
+  protected String getRenderedAgencySpecificPrivacy(Agency agency) {
+    RestrictedTenantDTO tenantDataHoldingFeatureToggles = getTenantDataRelevantForFeatureToggles(
+        agency);
+    Settings settings = tenantDataHoldingFeatureToggles != null ? tenantDataHoldingFeatureToggles.getSettings() : null;
+    if (settings != null && settings.getFeatureCentralDataProtectionTemplateEnabled() != null && Boolean.TRUE.equals(settings.getFeatureCentralDataProtectionTemplateEnabled())) {
+      return centralDataProtectionTemplateService.renderPrivacyTemplateWithRenderedPlaceholderValues(
+          agency);
+    } else {
+      return null;
+    }
   }
 
 
@@ -306,7 +342,9 @@ public class AgencyService {
         .external(agency.isExternal())
         .demographics(getDemographics(agency))
         .tenantId(agency.getTenantId())
-        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).collect(Collectors.toList()));
+        .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
+        .agencyLogo(agency.getAgencyLogo());
+
   }
 
   private DemographicsDTO getDemographics(Agency agency) {

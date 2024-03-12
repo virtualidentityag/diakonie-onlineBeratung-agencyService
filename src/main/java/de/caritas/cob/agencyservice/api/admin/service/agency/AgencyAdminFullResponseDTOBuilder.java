@@ -22,6 +22,7 @@ public class AgencyAdminFullResponseDTOBuilder {
 
   private final @NonNull Agency agency;
 
+
   /**
    * Creates an {@link AgencyAdminFullResponseDTO()} with HAL-Links from an {@link Agency}
    * instance.
@@ -51,7 +52,9 @@ public class AgencyAdminFullResponseDTOBuilder {
         .counsellingRelations(splitToList(agency.getCounsellingRelations()))
         .createDate(String.valueOf(this.agency.getCreateDate()))
         .updateDate(String.valueOf(this.agency.getUpdateDate()))
-        .deleteDate(String.valueOf(this.agency.getDeleteDate()));
+        .deleteDate(String.valueOf(this.agency.getDeleteDate()))
+        .dataProtection(new DataProtectionDTOBuilder(this.agency).fromAgency())
+        .agencyLogo(this.agency.getAgencyLogo());
 
     responseDTO.demographics(getDemographics(this.agency));
     return responseDTO;
