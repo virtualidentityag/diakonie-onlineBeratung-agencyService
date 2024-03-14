@@ -15,7 +15,7 @@ paths:
       parameters:
         - name: postcode
           in: query
-          required: true
+          required: false
           description: The postcode the user entered
           schema:
             type: string
@@ -172,10 +172,16 @@ components:
           type: integer
           format: int64
           example: 12
+        agencySpecificPrivacy:
+          type: string
+          example: "specific for agency privacy text"
         topicIds:
           type: array
           items:
             type: long
+        agencyLogo:
+          type: string
+          example: "base64 encoded image"
 
     FullAgencyResponseDTO:
       type: object
