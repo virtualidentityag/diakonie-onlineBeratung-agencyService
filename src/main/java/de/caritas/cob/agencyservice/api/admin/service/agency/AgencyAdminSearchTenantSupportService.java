@@ -34,11 +34,14 @@ public class AgencyAdminSearchTenantSupportService extends AgencyAdminSearchServ
         agencyAdminFilterPredicate(criteriaBuilder, root)};
   }
 
-  protected Predicate tenantPredicate(CriteriaBuilder criteriaBuilder,
-      Root<Agency> root) {
-    return criteriaBuilder.and(
-        criteriaBuilder.equal(root.get(TENANT_ID_SEARCH_FIELD),
-            TenantContext.getCurrentTenant()));
+  protected Predicate tenantPredicate(CriteriaBuilder criteriaBuilder, Root<Agency> root) {
+    if (authenticatedUser.isAgencySuperAdmin()) {
+      return criteriaBuilder.isNotNull(root.get(TENANT_ID_SEARCH_FIELD));
+    } else {
+      return criteriaBuilder.and(
+          criteriaBuilder.equal(
+              root.get(TENANT_ID_SEARCH_FIELD), TenantContext.getCurrentTenant()));
+    }
   }
 
   @Override

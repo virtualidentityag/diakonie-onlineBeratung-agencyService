@@ -60,10 +60,30 @@ class AgencyAdminSearchTenantSupportServiceTest {
   void searchAgency_Should_FindAllAgenciesForGivenTenant() {
     // given, when
     var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 10, new Sort());
+
     // then
-    assertThat(agencySearchResult.getEmbedded()).isNotEmpty();
-    assertThat(agencySearchResult.getEmbedded()).hasSize(2);
-    assertThat(agencySearchResult.getEmbedded()).extracting("embedded.id").containsOnly(1735L, 1737L);
+    assertThat(agencySearchResult.getTotal()).isEqualTo(2);
+    assertThat(agencySearchResult.getEmbedded())
+            .isNotEmpty()
+            .hasSize(2)
+            .extracting("embedded.id").containsOnly(1735L, 1737L);
+  }
+
+  @Test
+  void searchAgency_Should_FindAllAgenciesForAllTenants_WhenUserIsSuperAdmin() {
+    // given
+    when(authenticatedUser.isAgencySuperAdmin()).thenReturn(true);
+    when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
+
+    // when
+    var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 1138, new Sort());
+
+    // then
+    assertThat(agencySearchResult.getTotal()).isEqualTo(3);
+    assertThat(agencySearchResult.getEmbedded())
+            .isNotEmpty()
+            .hasSize(3)
+            .extracting("embedded.id").contains(1735L, 1737L, 1738L);
   }
 
   @Test
@@ -78,8 +98,11 @@ class AgencyAdminSearchTenantSupportServiceTest {
     var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 10, new Sort());
 
     // then
-    assertThat(agencySearchResult.getEmbedded()).hasSize(1);
-    assertThat(agencySearchResult.getEmbedded()).extracting("embedded.id").containsOnly(1735L);
+    assertThat(agencySearchResult.getTotal()).isEqualTo(1);
+    assertThat(agencySearchResult.getEmbedded())
+            .isNotEmpty()
+            .hasSize(1)
+            .extracting("embedded.id").containsOnly(1735L);
   }
 
   @Test

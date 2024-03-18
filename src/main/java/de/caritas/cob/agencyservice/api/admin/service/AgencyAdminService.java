@@ -291,6 +291,11 @@ public class AgencyAdminService {
     this.appointmentService.deleteAgency(agency);
   }
 
+  /**
+   * Returns all agencies for the provided tenant ID.
+   *
+   * @param tenantId the provided tenantId
+   */
   public List<Agency> getAgenciesByTenantId(Long tenantId) {
     return this.agencyTenantUnawareRepository.findByTenantId(tenantId);
   }
