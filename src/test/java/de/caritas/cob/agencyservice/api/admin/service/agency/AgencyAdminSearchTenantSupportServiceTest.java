@@ -70,13 +70,13 @@ class AgencyAdminSearchTenantSupportServiceTest {
   }
 
   @Test
-  void searchAgency_Should_FindAllAgenciesForAllTenants_WhenUserIsSuperAdmin() {
+  void searchAgency_Should_FindAllAgenciesForAllTenants_When_UserIsSuperAdmin() {
     // given
-    when(authenticatedUser.isAgencySuperAdmin()).thenReturn(true);
+    when(authenticatedUser.isTenantSuperAdmin()).thenReturn(true);
     when(securityHeaderSupplier.getKeycloakAndCsrfHttpHeaders()).thenReturn(new HttpHeaders());
 
     // when
-    var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 1138, new Sort());
+    var agencySearchResult = agencyAdminSearchTenantSupportService.searchAgencies("", 1, 10, new Sort());
 
     // then
     assertThat(agencySearchResult.getTotal()).isEqualTo(3);
@@ -87,7 +87,7 @@ class AgencyAdminSearchTenantSupportServiceTest {
   }
 
   @Test
-  void searchAgency_Should_FindOnlyAgenciesManagedByTheAdminAndInTheTenant_WhenUserIsAgencyAdmin() {
+  void searchAgency_Should_FindOnlyAgenciesManagedByTheAdminAndInTheTenant_When_UserIsAgencyAdmin() {
     // given
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
     when(authenticatedUser.getUserId()).thenReturn("userId");
@@ -106,7 +106,7 @@ class AgencyAdminSearchTenantSupportServiceTest {
   }
 
   @Test
-  void searchAgency_Should_NotFindAnyAgencies_WhenUserIsAgencyAdminButDoesntManageAnyAgencies() {
+  void searchAgency_Should_NotFindAnyAgencies_When_UserIsAgencyAdminButDoesntManageAnyAgencies() {
     // given
     when(authenticatedUser.hasRestrictedAgencyPriviliges()).thenReturn(true);
     when(authenticatedUser.getUserId()).thenReturn("userId");
