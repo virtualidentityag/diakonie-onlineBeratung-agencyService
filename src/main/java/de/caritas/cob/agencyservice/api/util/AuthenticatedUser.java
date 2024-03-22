@@ -38,7 +38,7 @@ public class AuthenticatedUser {
   }
 
   @JsonIgnore
-  public boolean isAgencySuperAdmin() {
+  public boolean isAgencyAdmin() {
     return nonNull(roles) && roles.contains(Authority.AGENCY_ADMIN.getRoleName());
   }
 
@@ -49,7 +49,7 @@ public class AuthenticatedUser {
 
   @JsonIgnore
   public boolean hasRestrictedAgencyPriviliges() {
-    return isRestrictedAgencyAdmin() && !isAgencySuperAdmin();
+    return isRestrictedAgencyAdmin() && !isAgencyAdmin();
   }
 
 
