@@ -9,10 +9,7 @@ import com.google.common.collect.Maps;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import jakarta.servlet.http.HttpServletRequest;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @ExtendWith(MockitoExtension.class)
 class TechnicalUserTenantResolverTest {
@@ -88,7 +84,7 @@ class TechnicalUserTenantResolverTest {
     headers.put("alg", "HS256"); // Signature algorithm
     headers.put("typ", "JWT"); // Token type
     return new Jwt(
-        "token", Instant.now(), Instant.now(), headers, givenClaimMapContainingRole(realmRole));
+        "token", Instant.now(), Instant.now().plusSeconds(1), headers, givenClaimMapContainingRole(realmRole));
   }
 
   private HashMap<String, Object> givenClaimMapContainingRole(String realmRole) {
