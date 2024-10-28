@@ -69,6 +69,8 @@ public class AgencyService {
   @Value("${feature.multitenancy.with.single.domain.enabled}")
   private boolean multitenancyWithSingleDomain;
 
+  private static final String DB_POSTCODES_ERROR = "Database error while getting postcodes";
+
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided agencyIds.
    *
@@ -142,6 +144,23 @@ public class AgencyService {
     return mutableResponseDTO;
   }
 
+  /**
+   * Returns a list of {@link AgencyResponseDTO} from the current tenant, which match to the provided
+   * postCode. If no agency is found, returns empty list.
+   *
+   * @param postCode the postcode for regarding agencies
+   * @param topicId  the topic id used for filtering agencies
+   * @return a list containing regarding agencies
+   */
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, Integer topicId) {
+
+    var agencies = findAgencies(postCode, topicId);
+    Collections.shuffle(agencies);
+    return agencies.stream()
+        .map(this::convertToFullAgencyResponseDTO)
+        .toList();
+  }
+
   public List<Integer> getAgenciesTopics() {
     return agencyRepository.findAllAgenciesTopics();
   }
@@ -175,6 +194,16 @@ public class AgencyService {
     }
   }
 
+  private List<Agency> findAgencies(String postCode, Integer topicId) {
+
+    AgencySearch agencySearch = AgencySearch.builder()
+        .postCode(Optional.of(postCode))
+        .topicId(Optional.of(topicId))
+        .build();
+
+    return findAgenciesWithTopicForCurrentTenant(agencySearch);
+  }
+
   private List<Agency> findAgencies(AgencySearch agencySearch) {
     try {
       return getAgencyRepositoryForSearch()
@@ -186,7 +215,7 @@ public class AgencyService {
               TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting postcodes");
+          DB_POSTCODES_ERROR);
     }
   }
 
@@ -250,7 +279,23 @@ public class AgencyService {
 
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting postcodes");
+          DB_POSTCODES_ERROR);
+    }
+  }
+
+  private List<Agency> findAgenciesWithTopicForCurrentTenant(AgencySearch agencySearch) {
+    try {
+      return agencyRepository
+          .searchWithTopic(agencySearch.getPostCode().orElse(null), agencySearch.getPostCode().orElse("").length(),
+              agencySearch.getConsultingTypeId().orElse(null),
+              agencySearch.getTopicId().orElseThrow(),
+              agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
+              agencySearch.getCounsellingRelation().orElse(null),
+              TenantContext.getCurrentTenant());
+
+    } catch (DataAccessException ex) {
+      throw new InternalServerErrorException(LogService::logDatabaseError,
+          DB_POSTCODES_ERROR);
     }
   }
 

@@ -75,6 +75,46 @@ paths:
           description: FORBIDDEN - no/invalid CSRF token
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
+  /agencies/private:
+    get:
+      tags:
+        - agency-controller
+      summary: 'Returns a list of agencies from a specific tenant. If no agency is found No Content
+        is being returned. [Authorization: none]'
+      operationId: getTenantAgencies
+      parameters:
+        - name: postcode
+          in: query
+          required: true
+          description: The postcode the user entered
+          schema:
+            type: string
+            minLength: 5
+            maxLength: 5
+            example: "56789"
+        - name: topicId
+          in: query
+          required: true
+          description: The main topic of the registration form
+          schema:
+            type: integer
+            format: int32
+            example: 7
+      responses:
+        200:
+          description: OK - successfull operation
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullAgencyResponseDTO'
+        400:
+          description: BAD REQUEST - invalid/incomplete request or body object
+        403:
+          description: FORBIDDEN - no/invalid CSRF token
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
   /agencies/topics:
     get:
       tags:

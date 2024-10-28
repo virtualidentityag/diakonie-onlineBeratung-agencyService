@@ -58,6 +58,25 @@ public class AgencyController implements AgenciesApi {
   }
 
   /**
+   * Gets a randomly sorted list of AgencyResponseDTOs (from database) and returns the list and a
+   * 200 OK on success depending on the post code that is given via query parameter.
+   *
+   * @param postcode       the postcode for regarding agencies
+   * @param topicId        the (optional) main topicId to filter the agencies
+   * @return the List of agencies with information
+   */
+  @Override
+  public ResponseEntity<List<FullAgencyResponseDTO>> getTenantAgencies(String postcode,
+      Integer topicId) {
+
+    var agencies = agencyService.getAgencies(postcode, topicId);
+
+    return !CollectionUtils.isEmpty(agencies)
+        ? new ResponseEntity<>(agencies, HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
    * Returns information of the provided agencies.
    *
    * @param agencyIds the List of agency IDs
