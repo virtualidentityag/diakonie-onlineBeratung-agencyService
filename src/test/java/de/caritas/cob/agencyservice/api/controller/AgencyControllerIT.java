@@ -12,11 +12,9 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POST
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_QUERY;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +26,7 @@ import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerEr
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
+import de.caritas.cob.agencyservice.api.service.TopicEnrichmentService;
 import de.caritas.cob.agencyservice.config.security.AuthorisationService;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverter;
 import de.caritas.cob.agencyservice.config.security.JwtAuthConverterProperties;
@@ -55,6 +54,9 @@ class AgencyControllerIT {
 
   @Autowired
   private MockMvc mvc;
+
+  @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
 
   @MockBean
   private AgencyService agencyService;
