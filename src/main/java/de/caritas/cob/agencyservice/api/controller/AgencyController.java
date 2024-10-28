@@ -3,8 +3,10 @@ package de.caritas.cob.agencyservice.api.controller;
 import static java.util.Optional.ofNullable;
 
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTopicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
+import de.caritas.cob.agencyservice.api.service.TopicEnrichmentService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
 import java.util.List;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AgencyController implements AgenciesApi {
 
   private final @NonNull AgencyService agencyService;
+  private final @NonNull TopicEnrichmentService topicEnrichmentService;
 
   /**
    * Gets a randomly sorted list of AgencyResponseDTOs (from database) and returns the list and a
@@ -83,5 +86,20 @@ public class AgencyController implements AgenciesApi {
     var agencies = this.agencyService.getAgencies(consultingTypeId);
 
     return new ResponseEntity<>(agencies, HttpStatus.OK);
+  }
+
+  /**
+   * Returns all the topics from all the agencies of a specific tenant
+   *
+   * @return lest of topics
+   */
+  @Override
+  public ResponseEntity<List<AgencyTopicsDTO>> getAgenciesTopics() {
+
+    var topics = this.agencyService.getAgenciesTopics();
+    var enrichedTopics = topicEnrichmentService.enrichTopicIdsWithTopicData(topics);
+
+    return enrichedTopics.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+        : new ResponseEntity<>(enrichedTopics, HttpStatus.OK);
   }
 }

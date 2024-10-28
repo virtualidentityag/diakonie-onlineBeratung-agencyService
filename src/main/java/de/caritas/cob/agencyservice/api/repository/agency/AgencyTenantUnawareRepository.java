@@ -38,6 +38,12 @@ public interface AgencyTenantUnawareRepository extends JpaRepository<Agency, Lon
       @Param(value = "gender") String gender,
       Long tenantId);
 
+  @Query(
+      value = SELECT_ALL_AGENCIES_TOPICS
+          + TOPIC_ORDER_BY,
+      nativeQuery = true)
+  List<Integer> findAllAgenciesTopics();
+
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 
   List<Agency> findByIdIn(List<Long> agencyIds);

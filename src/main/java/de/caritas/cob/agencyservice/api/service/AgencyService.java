@@ -81,7 +81,6 @@ public class AgencyService {
         .toList();
   }
 
-
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided consulting type.
    *
@@ -101,7 +100,6 @@ public class AgencyService {
           String.format("Consulting type with id %s does not exist", consultingTypeId));
     }
   }
-
 
   public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode, int consultingTypeId,
       Optional<Integer> topicId) {
@@ -128,7 +126,6 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-
     var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
         age, gender, counsellingRelation);
     Collections.shuffle(agencies);
@@ -143,6 +140,10 @@ public class AgencyService {
     }
 
     return mutableResponseDTO;
+  }
+
+  public List<Integer> getAgenciesTopics() {
+    return getAgencyRepositoryForSearch().findAllAgenciesTopics();
   }
 
   private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {

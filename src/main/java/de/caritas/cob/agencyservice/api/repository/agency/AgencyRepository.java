@@ -46,8 +46,13 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
       + "AND ((:gender IS NULL) OR (a.genders LIKE CONCAT('%,',:gender,'%') OR a.genders LIKE CONCAT(:gender,'%'))) "
       + "AND a.delete_date IS NULL ";
 
+  String SELECT_ALL_AGENCIES_TOPICS = "SELECT distinct(at.topic_id) FROM agency_topic at "
+      + "INNER JOIN agency a ON a.id = at.agency_id ";
+
   String GROUP_BY_ORDER_BY = "GROUP BY a.id "
       + "ORDER BY a.postcode DESC";
+
+  String TOPIC_ORDER_BY = "ORDER BY at.topic_id";
 
   /**
    * Returns a list of {@link Agency}s that are assigned to the given post code.
@@ -79,6 +84,12 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
       @Param(value = "gender") String gender,
       @Param(value = "counselling_relation") String counsellingRelation,
       Long tenantId);
+
+  @Query(
+      value = SELECT_ALL_AGENCIES_TOPICS
+          + TOPIC_ORDER_BY,
+      nativeQuery = true)
+  List<Integer> findAllAgenciesTopics();
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 
