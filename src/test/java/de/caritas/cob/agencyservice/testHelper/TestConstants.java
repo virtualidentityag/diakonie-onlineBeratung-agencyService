@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.testHelper;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.registration.Registration;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.whiteSpot.WhiteSpot;
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.AgencyTopicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
@@ -185,6 +186,8 @@ public class TestConstants {
       new FullAgencyResponseDTO().id(AGENCY_ID).name(AGENCY_NAME).postcode(POSTCODE)
           .city(AGENCY_CITY).description(AGENCY_DESCRIPTION).teamAgency(false).offline(false)
           .consultingType(CONSULTING_TYPE_SUCHT).url(null).external(false);
+  public static final AgencyTopicsDTO AGENCY_TOPICS_DTO =
+      new AgencyTopicsDTO().id(AGENCY_ID).name(AGENCY_NAME);
   public static final List<FullAgencyResponseDTO> FULL_AGENCY_RESPONSE_DTO_LIST = Collections.singletonList(
       FULL_AGENCY_RESPONSE_DTO);
   public static final int MIN_POSTCODE_SIZE_3 = 3;

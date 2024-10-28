@@ -2,9 +2,11 @@ package de.caritas.cob.agencyservice.api.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES_TOPICS;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO_LIST;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_TOPICS_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.FULL_AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_CONSULTING_TYPE_QUERY;
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.caritas.cob.agencyservice.api.authorization.RoleAuthorizationAuthorityMapper;
 import de.caritas.cob.agencyservice.api.exception.httpresponses.InternalServerErrorException;
+import de.caritas.cob.agencyservice.api.model.AgencyTopicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.api.service.LogService;
@@ -248,6 +251,34 @@ class AgencyControllerIT {
         get(PATH_GET_AGENCIES_BY_CONSULTINGTYPE)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  void getAgenciesTopics_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
+
+    when(agencyService.getAgenciesTopics())
+        .thenReturn(null);
+
+    mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES_TOPICS)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void getAgenciesTopics_Should_ReturnListAndOk_When_ServiceReturnsList() throws Exception {
+
+    List<AgencyTopicsDTO> agenciesTopics = new ArrayList<>();
+    agenciesTopics.add(AGENCY_TOPICS_DTO);
+
+    when(topicEnrichmentService.enrichTopicIdsWithTopicData(Mockito.anyList()))
+        .thenReturn(agenciesTopics);
+
+    mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES_TOPICS))
+        .andExpect(status().isOk());
+
+    verify(topicEnrichmentService, atLeastOnce()).enrichTopicIdsWithTopicData(Mockito.anyList());
   }
 
 }

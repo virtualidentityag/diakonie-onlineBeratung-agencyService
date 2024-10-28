@@ -99,7 +99,7 @@ public class AgencyController implements AgenciesApi {
     var topics = this.agencyService.getAgenciesTopics();
     var enrichedTopics = topicEnrichmentService.enrichTopicIdsWithTopicData(topics);
 
-    return enrichedTopics.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+    return enrichedTopics.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(enrichedTopics, HttpStatus.OK);
   }
 }
