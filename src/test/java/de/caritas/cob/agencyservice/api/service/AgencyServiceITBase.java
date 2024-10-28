@@ -32,6 +32,8 @@ public class AgencyServiceITBase {
   private AgencyRepository agencyRepository;
   @MockBean
   private ConsultingTypeManager consultingTypeManager;
+  @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
 
   public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndConsultingTypeIsGiven()
       throws MissingConsultingTypeException {
@@ -62,6 +64,12 @@ public class AgencyServiceITBase {
     List<AgencyResponseDTO> agencies = this.agencyService.getAgencies(CONSULTING_TYPE_U25);
 
     assertThat(agencies, hasSize(greaterThan(0)));
+  }
+
+  public void getAgenciesTopics_Should_ReturnResults_When_topics_exist() {
+    List<Integer> topicIds = this.agencyService.getAgenciesTopics();
+
+    assertThat(topicIds, hasSize(greaterThan(0)));
   }
 
 }

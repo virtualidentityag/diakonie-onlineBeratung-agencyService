@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.util.Lists;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Retry.Topic;
 
 public class TestConstants {
 
@@ -165,6 +166,8 @@ public class TestConstants {
       .isExternal(false)
       .build();
 
+  public static final Integer TOPIC_SUCHT = 1;
+
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, AGENCY_NAME,
       AGENCY_DESCRIPTION,
       POSTCODE, "Test city", false, CONSULTING_TYPE_KREUZBUND, false, null, false, null, null, null,
@@ -203,6 +206,7 @@ public class TestConstants {
 
   public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
+  public static final List<Integer> TOPIC_ID_LIST = Collections.singletonList(TOPIC_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 
   public static final String VALID_CONSULTING_TYPE_QUERY = "consultingType=0";
