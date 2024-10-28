@@ -143,7 +143,7 @@ public class AgencyService {
   }
 
   public List<Integer> getAgenciesTopics() {
-    return getAgencyRepositoryForSearch().findAllAgenciesTopics();
+    return agencyRepository.findAllAgenciesTopics();
   }
 
   private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {
