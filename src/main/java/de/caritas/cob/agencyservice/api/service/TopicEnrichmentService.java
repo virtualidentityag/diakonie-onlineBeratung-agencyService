@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.service;
 
 import de.caritas.cob.agencyservice.api.model.AgencyTopicsDTO;
 import de.caritas.cob.agencyservice.topicservice.generated.web.model.TopicDTO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,11 +25,23 @@ public class TopicEnrichmentService {
     log.debug("Enriching topic ids with topics short titles");
     var availableTopics = topicService.getAllTopics();
     log.debug("Enriching topic ids list with size: {} ", topicIds.size());
-    log.debug("Available topics list has size: {} ", availableTopics.size());
+    logAvailableTopicsList(availableTopics);
     return enrichTopicIds(availableTopics, topicIds);
   }
 
+  private static void logAvailableTopicsList(List<TopicDTO> availableTopics) {
+    if (availableTopics == null) {
+      log.debug("Available topics list is null ");
+    } else {
+      log.debug("Available topics list has size: {} ", availableTopics.size());
+    }
+  }
+
   private List<AgencyTopicsDTO> enrichTopicIds(List<TopicDTO> availableTopics, List<Integer> topicIds) {
+
+    if (availableTopics == null) {
+      return new ArrayList<>();
+    }
     // Create a map of availableTopics to quickly access TopicDTO by id
     Map<Long, String> topicMap = availableTopics.stream()
         .collect(Collectors.toMap(TopicDTO::getId, TopicDTO::getName));
