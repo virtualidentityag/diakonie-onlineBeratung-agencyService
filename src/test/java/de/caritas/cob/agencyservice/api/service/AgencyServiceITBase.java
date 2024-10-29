@@ -72,4 +72,16 @@ public class AgencyServiceITBase {
     assertThat(topicIds, hasSize(greaterThan(0)));
   }
 
+  public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndTopicIdIsGiven() {
+
+    String postCode = "45501";
+    Integer topicId = 1;
+
+    List<FullAgencyResponseDTO> resultAgencies = agencyService.getAgencies(postCode, topicId);
+
+    assertThat(resultAgencies, hasSize(1));
+    FullAgencyResponseDTO resultAgency = resultAgencies.get(0);
+    assertThat(resultAgency.getId(), is(14352L));
+  }
+
 }

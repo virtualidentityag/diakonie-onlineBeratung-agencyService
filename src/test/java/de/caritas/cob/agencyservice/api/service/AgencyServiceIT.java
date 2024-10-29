@@ -40,4 +40,9 @@ public class AgencyServiceIT extends AgencyServiceITBase {
   public void getAgenciesTopics_Should_ReturnResults_When_topics_exist() {
     super.getAgenciesTopics_Should_ReturnResults_When_topics_exist();
   }
+
+  @Test
+  public void getAgencies_Should_returnMatchingAgencies_When_postcodeAndTopicIdIsGiven() {
+    super.getAgencies_Should_returnMatchingAgencies_When_postcodeAndTopicIdIsGiven();
+  }
 }

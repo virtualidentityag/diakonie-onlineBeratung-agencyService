@@ -173,14 +173,8 @@ public class AgencyService {
       Optional<Integer> optionalTopicId, Optional<Integer> age,
       Optional<String> gender, Optional<String> counsellingRelation) {
 
-    AgencySearch agencySearch = AgencySearch.builder()
-        .postCode(postCode)
-        .consultingTypeId(consultingTypeId)
-        .topicId(optionalTopicId)
-        .age(age)
-        .gender(gender)
-        .counsellingRelation(counsellingRelation)
-        .build();
+    AgencySearch agencySearch = buildAgencySearch(postCode,
+        consultingTypeId, optionalTopicId, age, gender, counsellingRelation);
 
     if (demographicsFeatureEnabled) {
       assertAgeAndGenderAreProvided(age, gender);
@@ -192,16 +186,6 @@ public class AgencyService {
     } else {
       return findAgencies(agencySearch);
     }
-  }
-
-  private List<Agency> findAgencies(String postCode, Integer topicId) {
-
-    AgencySearch agencySearch = AgencySearch.builder()
-        .postCode(Optional.of(postCode))
-        .topicId(Optional.of(topicId))
-        .build();
-
-    return findAgenciesWithTopicForCurrentTenant(agencySearch);
   }
 
   private List<Agency> findAgencies(AgencySearch agencySearch) {
@@ -217,6 +201,28 @@ public class AgencyService {
       throw new InternalServerErrorException(LogService::logDatabaseError,
           DB_POSTCODES_ERROR);
     }
+  }
+
+  private List<Agency> findAgencies(String postCode, Integer topicId) {
+
+    AgencySearch agencySearch = buildAgencySearch(Optional.of(postCode),
+        Optional.empty(), Optional.of(topicId), Optional.empty(),
+        Optional.empty(), Optional.empty());
+
+    return findAgenciesWithTopicForCurrentTenant(agencySearch);
+  }
+
+  private static AgencySearch buildAgencySearch(Optional<String> postCode,
+      Optional<Integer> consultingTypeId, Optional<Integer> optionalTopicId, Optional<Integer> age,
+      Optional<String> gender, Optional<String> counsellingRelation) {
+    return AgencySearch.builder()
+        .postCode(postCode)
+        .consultingTypeId(consultingTypeId)
+        .topicId(optionalTopicId)
+        .age(age)
+        .gender(gender)
+        .counsellingRelation(counsellingRelation)
+        .build();
   }
 
   private void assertTopicIdIsProvided(Optional<Integer> topicId) {
