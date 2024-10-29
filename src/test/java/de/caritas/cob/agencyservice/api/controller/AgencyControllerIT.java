@@ -2,6 +2,7 @@ package de.caritas.cob.agencyservice.api.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES_PRIVATE;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES_TOPICS;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
@@ -14,6 +15,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POST
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_CONSULTING_TYPE_QUERY;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_QUERY;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_TOPIC_ID_QUERY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
@@ -279,6 +281,64 @@ class AgencyControllerIT {
         .andExpect(status().isOk());
 
     verify(topicEnrichmentService, atLeastOnce()).enrichTopicIdsWithTopicData(Mockito.anyList());
+  }
+
+  @Test
+  void getTenantAgencies_Should_ReturnNoContent_When_ServiceReturnsEmptyList() throws Exception {
+
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
+        .thenReturn(null);
+
+    mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY + "&"
+                + VALID_TOPIC_ID_QUERY)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void getTenantAgencies_Should_ReturnBadRequest_When_PostcodeParamIsInvalid() throws Exception {
+
+    mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + INVALID_POSTCODE_QUERY + "&"
+                + VALID_TOPIC_ID_QUERY)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getTenantAgencies_Should_ReturnBadRequest_When_topicIdParamIsNotProvided()
+      throws Exception {
+
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY)
+        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getTenantAgencies_Should_ReturnBadRequest_When_PostCodeParamIsNotProvided()
+      throws Exception {
+
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_TOPIC_ID_QUERY)
+        .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getTenantAgencies_Should_ReturnListAndOk_When_ServiceReturnsList() throws Exception {
+
+    List<FullAgencyResponseDTO> agencies = new ArrayList<>();
+    agencies.add(FULL_AGENCY_RESPONSE_DTO);
+
+    when(agencyService.getAgencies(Mockito.anyString(), Mockito.anyInt()))
+        .thenReturn(agencies);
+
+    mvc.perform(
+            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY + "&"
+                + VALID_TOPIC_ID_QUERY)
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("[0].name").value(AGENCY_RESPONSE_DTO.getName()));
+
+    verify(agencyService, atLeastOnce()).getAgencies(Mockito.anyString(), Mockito.anyInt());
   }
 
 }

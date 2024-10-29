@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.util.Lists;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Retry.Topic;
 
 public class TestConstants {
 
@@ -150,6 +149,7 @@ public class TestConstants {
   public static final String VALID_POSTCODE_6 = "33445";
   public static final String AGENCY_CITY = "Test city";
   public static final String VALID_POSTCODE_QUERY = "postcode=88488";
+  public static final String VALID_TOPIC_ID_QUERY = "topicId=1";
   public static final int VALID_POSTCODE_LENGTH = 5;
   public static final Long AGENCY_ID = 98L;
   public static final String AGENCY_NAME = "Test agency";
