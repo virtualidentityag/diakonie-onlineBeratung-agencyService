@@ -6,6 +6,7 @@ import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.AgencyTopicsDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.repository.agency.Agency;
+import de.caritas.cob.agencyservice.api.repository.agencytopic.AgencyTopic;
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.ExtendedConsultingTypeResponseDTO;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -166,6 +167,26 @@ public class TestConstants {
       .isExternal(false)
       .build();
 
+  public static final Long TOPIC_ID = 1L;
+
+  public static final AgencyTopic AGENCY_TOPIC = AgencyTopic.builder()
+      .topicId(TOPIC_ID)
+      .agency(AGENCY_SUCHT)
+      .build();
+
+  public static final Agency AGENCY_SUCHT_WITH_TOPICS = Agency.builder()
+      .id(AGENCY_ID)
+      .name(AGENCY_NAME)
+      .description(AGENCY_DESCRIPTION)
+      .postCode(POSTCODE)
+      .city("Test city")
+      .teamAgency(false)
+      .consultingTypeId(CONSULTING_TYPE_SUCHT)
+      .offline(false)
+      .isExternal(false)
+      .agencyTopics(Collections.singletonList(AGENCY_TOPIC))
+      .build();
+
   public static final Integer TOPIC_SUCHT = 1;
 
   public static final Agency AGENCY_KREUZBUND = new Agency(AGENCY_ID, AGENCY_NAME,
@@ -206,6 +227,7 @@ public class TestConstants {
 
   public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
+  public static final List<Agency> AGENCY_LIST_WITH_TOPICS = Collections.singletonList(AGENCY_SUCHT_WITH_TOPICS);
   public static final List<Integer> TOPIC_ID_LIST = Collections.singletonList(TOPIC_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 

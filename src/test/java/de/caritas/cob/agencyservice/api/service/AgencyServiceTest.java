@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.service;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_IDS_LIST;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_LIST;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_LIST_WITH_TOPICS;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_OFFLINE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ONLINE_U25;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
@@ -357,5 +358,24 @@ public class AgencyServiceTest {
     List<Integer> result = agencyService.getAgenciesTopics();
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  public void getAgencies_WithOnlyPostCodeAndTopicId_Should_ReturnEmptyList_When_NoAgencyFound() {
+
+    assertThat(agencyService.getAgencies("99999", 1),
+        IsEmptyCollection.empty());
+  }
+
+  @Test
+  public void getAgencies_WithOnlyPostCodeAndTopicId_Should_ReturnResultList_When_AgencyFound() {
+
+    when(agencyRepository.searchWithTopic("99999", 5, null,
+        1, null, null, null, null))
+        .thenReturn(AGENCY_LIST_WITH_TOPICS);
+
+    var result = agencyService.getAgencies("99999", 1);
+
+    assertThat(result).isNotEmpty();
   }
 }
