@@ -75,12 +75,13 @@ paths:
           description: FORBIDDEN - no/invalid CSRF token
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
-  /agencies/private:
+  /agencies/by-tenant:
     get:
       tags:
         - agency-controller
-      summary: 'Returns a list of agencies from a specific tenant. If no agency is found No Content
-        is being returned. [Authorization: none]'
+      summary: 'Returns a list of agencies from a specific tenant (retrieved from the security context).
+       The security context is retrieved from the bearer token, so it is not passed as a request parameter.
+       If no agency is found No Content is being returned. [Authorization: none]'
       operationId: getTenantAgencies
       parameters:
         - name: postcode

@@ -17,7 +17,9 @@ public enum Authority {
   TENANT_ADMIN("tenant-admin", AuthorityValue.TENANT_ADMIN),
   RESTRICTED_AGENCY_ADMIN("restricted-agency-admin", AuthorityValue.RESTRICTED_AGENCY_ADMIN, AuthorityValue.SEARCH_AGENCIES),
 
-  RESTRICTED_CONSULTANT_ADMIN("restricted-consultant-admin", AuthorityValue.SEARCH_AGENCIES);
+  RESTRICTED_CONSULTANT_ADMIN("restricted-consultant-admin", AuthorityValue.SEARCH_AGENCIES),
+
+  ADVICE_SEEKER("user", AuthorityValue.SEARCH_AGENCIES_WITHIN_TENANT);
 
   private final String roleName;
   private final List<String> authorities;
@@ -55,6 +57,7 @@ public enum Authority {
     public static final String SEARCH_AGENCIES = PREFIX + "SEARCH_AGENCIES";
     public static final String TENANT_ADMIN = PREFIX + "TENANT_ADMIN";
     public static final String RESTRICTED_AGENCY_ADMIN = PREFIX + "RESTRICTED_AGENCY_ADMIN";
+    public static final String SEARCH_AGENCIES_WITHIN_TENANT = PREFIX + "SEARCH_AGENCIES_WITHIN_TENANT";
 
   }
 
