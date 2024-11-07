@@ -1,6 +1,6 @@
 package de.caritas.cob.agencyservice.api.controller;
 
-import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES_PRIVATE;
+import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES_BY_TENANT;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.FULL_AGENCY_RESPONSE_DTO;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.INVALID_POSTCODE_QUERY;
@@ -52,7 +52,7 @@ class AgencyControllerIT {
         .thenReturn(null);
 
     mvc.perform(
-            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY + "&"
+            get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_POSTCODE_QUERY + "&"
                 + VALID_TOPIC_ID_QUERY)
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNoContent());
@@ -63,7 +63,7 @@ class AgencyControllerIT {
   void getTenantAgencies_Should_ReturnBadRequest_When_PostcodeParamIsInvalid() throws Exception {
 
     mvc.perform(
-            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + INVALID_POSTCODE_QUERY + "&"
+            get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + INVALID_POSTCODE_QUERY + "&"
                 + VALID_TOPIC_ID_QUERY)
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
@@ -74,7 +74,7 @@ class AgencyControllerIT {
   void getTenantAgencies_Should_ReturnBadRequest_When_topicIdParamIsNotProvided()
       throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_POSTCODE_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -83,7 +83,7 @@ class AgencyControllerIT {
   void getTenantAgencies_Should_ReturnBadRequest_When_PostCodeParamIsNotProvided()
       throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_TOPIC_ID_QUERY)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_TOPIC_ID_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
   }
 
@@ -98,7 +98,7 @@ class AgencyControllerIT {
         .thenReturn(agencies);
 
     mvc.perform(
-            get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_POSTCODE_QUERY + "&"
+            get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_POSTCODE_QUERY + "&"
                 + VALID_TOPIC_ID_QUERY)
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -110,7 +110,7 @@ class AgencyControllerIT {
   @Test
   void getTenantAgencies_Should_ReturnUnauthorized_When_UserHasNoAuthority() throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_TOPIC_ID_QUERY)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_TOPIC_ID_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isUnauthorized());
   }
 
@@ -118,7 +118,7 @@ class AgencyControllerIT {
   @WithMockUser(authorities = {AuthorityValue.SEARCH_AGENCIES})
   void getTenantAgencies_Should_ReturnForbidden_When_UserHasWrongAuthority() throws Exception {
 
-    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_PRIVATE + "?" + VALID_TOPIC_ID_QUERY)
+    mvc.perform(get(PATH_GET_LIST_OF_AGENCIES_BY_TENANT + "?" + VALID_TOPIC_ID_QUERY)
         .accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
   }
 }

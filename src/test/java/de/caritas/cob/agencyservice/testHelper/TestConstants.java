@@ -174,7 +174,7 @@ public class TestConstants {
       .agency(AGENCY_SUCHT)
       .build();
 
-  public static final Agency AGENCY_SUCHT_WITH_TOPICS = Agency.builder()
+  public static final Agency AGENCY_SEARCH_WITH_TOPICS = Agency.builder()
       .id(AGENCY_ID)
       .name(AGENCY_NAME)
       .description(AGENCY_DESCRIPTION)
@@ -227,7 +227,8 @@ public class TestConstants {
 
   public static final List<Agency> EMPTY_AGENCY_LIST = new ArrayList<>();
   public static final List<Agency> AGENCY_LIST = Collections.singletonList(AGENCY_SUCHT);
-  public static final List<Agency> AGENCY_LIST_WITH_TOPICS = Collections.singletonList(AGENCY_SUCHT_WITH_TOPICS);
+  public static final List<Agency> AGENCY_LIST_WITH_TOPICS = Collections.singletonList(
+      AGENCY_SEARCH_WITH_TOPICS);
   public static final List<Integer> TOPIC_ID_LIST = Collections.singletonList(TOPIC_SUCHT);
   public static final List<Long> AGENCY_IDS_LIST = Collections.singletonList(AGENCY_ID);
 

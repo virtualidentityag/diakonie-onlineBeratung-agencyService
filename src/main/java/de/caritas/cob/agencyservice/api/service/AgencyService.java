@@ -144,18 +144,9 @@ public class AgencyService {
     return mutableResponseDTO;
   }
 
-  /**
-   * Returns a list of {@link AgencyResponseDTO} from the current tenant, which match to the provided
-   * postCode. If no agency is found, returns empty list.
-   *
-   * @param postCode the postcode for regarding agencies
-   * @param topicId  the topic id used for filtering agencies
-   * @return a list containing regarding agencies
-   */
   public List<FullAgencyResponseDTO> getAgencies(String postCode, Integer topicId) {
 
-    var agencies = findAgencies(postCode, topicId);
-    Collections.shuffle(agencies);
+    var agencies = findAgenciesForCurrentTenant(postCode, topicId);
     return agencies.stream()
         .map(this::convertToFullAgencyResponseDTO)
         .toList();
@@ -203,7 +194,7 @@ public class AgencyService {
     }
   }
 
-  private List<Agency> findAgencies(String postCode, Integer topicId) {
+  private List<Agency> findAgenciesForCurrentTenant(String postCode, Integer topicId) {
 
     AgencySearch agencySearch = buildAgencySearch(Optional.of(postCode),
         Optional.empty(), Optional.of(topicId), Optional.empty(),

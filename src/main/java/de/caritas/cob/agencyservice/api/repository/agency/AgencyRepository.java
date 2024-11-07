@@ -52,7 +52,7 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
   String GROUP_BY_ORDER_BY = "GROUP BY a.id "
       + "ORDER BY a.postcode DESC";
 
-  String TOPIC_ORDER_BY = "ORDER BY at.topic_id";
+  String ORDER_BY_TOPIC = "ORDER BY at.topic_id";
 
   /**
    * Returns a list of {@link Agency}s that are assigned to the given post code.
@@ -87,7 +87,7 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
 
   @Query(
       value = SELECT_ALL_AGENCIES_TOPICS
-          + TOPIC_ORDER_BY,
+          + ORDER_BY_TOPIC,
       nativeQuery = true)
   List<Integer> findAllAgenciesTopics();
 

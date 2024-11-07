@@ -120,7 +120,7 @@ paths:
     get:
       tags:
         - agency-controller
-      summary: 'Returns a list of all the topics assign to all the agencies of a specific tenant'
+      summary: 'Returns a list of all the topics assigned to all the agencies of a specific tenant'
       operationId: getAgenciesTopics
       responses:
         200:
@@ -269,7 +269,7 @@ components:
           example: 684
         name:
           type: string
-          example: "Counselling"
+          example: "Adoption and fostering a child"
 
     DemographicsDTO:
       type: object

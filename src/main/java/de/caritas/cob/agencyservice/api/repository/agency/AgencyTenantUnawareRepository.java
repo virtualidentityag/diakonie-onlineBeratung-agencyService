@@ -40,7 +40,7 @@ public interface AgencyTenantUnawareRepository extends JpaRepository<Agency, Lon
 
   @Query(
       value = SELECT_ALL_AGENCIES_TOPICS
-          + TOPIC_ORDER_BY,
+          + ORDER_BY_TOPIC,
       nativeQuery = true)
   List<Integer> findAllAgenciesTopics();
 
