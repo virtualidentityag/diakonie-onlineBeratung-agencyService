@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.service;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_IDS_LIST;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_LIST;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_LIST_WITH_TOPICS;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_OFFLINE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_ONLINE_U25;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.AGENCY_RESPONSE_DTO;
@@ -15,6 +16,7 @@ import static de.caritas.cob.agencyservice.testHelper.TestConstants.CONSULTING_T
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.EMPTY_AGENCY_LIST;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.FIELD_AGENCY_ID;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.POSTCODE;
+import static de.caritas.cob.agencyservice.testHelper.TestConstants.TOPIC_ID_LIST;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE;
 import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_POSTCODE_LENGTH;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,8 +48,10 @@ import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.Ex
 import de.caritas.cob.agencyservice.consultingtypeservice.generated.web.model.RegistrationDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.RestrictedTenantDTO;
 import de.caritas.cob.agencyservice.tenantservice.generated.web.model.Settings;
+import io.swagger.models.auth.In;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import javax.swing.text.html.Option;
 import org.hamcrest.collection.IsEmptyCollection;
@@ -332,5 +336,46 @@ public class AgencyServiceTest {
     // then
     verify(agencyRepository).searchWithTopic("12123", 5, 1, 2, AGE, GENDER, COUNSELLING_RELATION,
         TENANT_ID);
+  }
+
+  @Test
+  public void getAgenciesTopics_Should_ReturnListOfTopicIds_When_topicsExist() {
+
+    when(agencyRepository.findAllAgenciesTopics(TenantContext.getCurrentTenant()))
+        .thenReturn(TOPIC_ID_LIST);
+
+    Integer result = agencyService.getAgenciesTopics().get(0);
+
+    assertEquals(TOPIC_ID_LIST.get(0), result);
+  }
+
+  @Test
+  public void getAgenciesTopics_Should_ReturnEmptyListOfTopicIds_When_topicsDontExist() {
+
+    when(agencyRepository.findAllAgenciesTopics(TenantContext.getCurrentTenant()))
+        .thenReturn(new ArrayList<>());
+
+    List<Integer> result = agencyService.getAgenciesTopics();
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  public void getAgencies_WithOnlyPostCodeAndTopicId_Should_ReturnEmptyList_When_NoAgencyFound() {
+
+    assertThat(agencyService.getAgencies("99999", 1),
+        IsEmptyCollection.empty());
+  }
+
+  @Test
+  public void getAgencies_WithOnlyPostCodeAndTopicId_Should_ReturnResultList_When_AgencyFound() {
+
+    when(agencyRepository.searchWithTopic("99999", 5, null,
+        1, null, null, null, null))
+        .thenReturn(AGENCY_LIST_WITH_TOPICS);
+
+    var result = agencyService.getAgencies("99999", 1);
+
+    assertThat(result).isNotEmpty();
   }
 }

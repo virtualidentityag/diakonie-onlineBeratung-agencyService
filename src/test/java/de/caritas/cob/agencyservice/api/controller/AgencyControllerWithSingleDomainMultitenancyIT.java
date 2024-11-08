@@ -2,8 +2,6 @@ package de.caritas.cob.agencyservice.api.controller;
 
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_AGENCIES_WITH_IDS;
 import static de.caritas.cob.agencyservice.testHelper.PathConstants.PATH_GET_LIST_OF_AGENCIES;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_AGE_QUERY;
-import static de.caritas.cob.agencyservice.testHelper.TestConstants.VALID_GENDER_QUERY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -14,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import de.caritas.cob.agencyservice.api.exception.MissingConsultingTypeException;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
+import de.caritas.cob.agencyservice.api.service.TopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.tenant.TenantContext;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.applicationsettingsservice.generated.web.model.ApplicationSettingsDTO;
@@ -32,7 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +60,9 @@ class AgencyControllerWithSingleDomainMultitenancyIT {
 
   @MockBean
   private ConsultingTypeManager consultingTypeManager;
+
+  @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
 
   @MockBean
   private ApplicationSettingsApiControllerFactory applicationSettingsApiControllerFactory;

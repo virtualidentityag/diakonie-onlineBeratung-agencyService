@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import de.caritas.cob.agencyservice.api.service.TenantService;
+import de.caritas.cob.agencyservice.api.service.TopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.manager.consultingtype.ConsultingTypeManager;
 import de.caritas.cob.agencyservice.api.model.AgencyDTO;
@@ -53,6 +54,9 @@ class AgencyAdminControllerWithDemographicsIT {
 
   @MockBean
   private ConsultingTypeManager consultingTypeManager;
+
+  @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
 
   @Autowired
   private WebApplicationContext context;

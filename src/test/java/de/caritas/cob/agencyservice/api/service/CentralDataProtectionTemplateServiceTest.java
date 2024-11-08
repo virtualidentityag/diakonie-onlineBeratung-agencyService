@@ -39,6 +39,9 @@ class CentralDataProtectionTemplateServiceTest {
   CentralDataProtectionTemplateService centralDataProtectionTemplateService;
 
   @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
+
+  @MockBean
   TenantService tenantService;
 
   @MockBean

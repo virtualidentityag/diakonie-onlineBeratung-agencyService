@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
 import de.caritas.cob.agencyservice.AgencyServiceApplication;
+import de.caritas.cob.agencyservice.api.service.TopicEnrichmentService;
 import de.caritas.cob.agencyservice.api.util.AuthenticatedUser;
 import de.caritas.cob.agencyservice.api.model.Sort;
 import de.caritas.cob.agencyservice.api.model.Sort.FieldEnum;
@@ -37,6 +38,9 @@ class AgencyAdminSearchServiceIT {
   private static final long FIRST_AGENCY_ID = 2L;
   @Autowired
   private AgencyAdminSearchService agencyAdminSearchService;
+
+  @MockBean
+  private TopicEnrichmentService topicEnrichmentService;
 
   @MockBean
   private AuthenticatedUser authenticatedUser;

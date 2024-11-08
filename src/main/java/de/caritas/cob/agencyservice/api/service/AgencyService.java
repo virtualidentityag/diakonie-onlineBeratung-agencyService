@@ -69,6 +69,8 @@ public class AgencyService {
   @Value("${feature.multitenancy.with.single.domain.enabled}")
   private boolean multitenancyWithSingleDomain;
 
+  private static final String DB_POSTCODES_ERROR = "Database error while getting postcodes";
+
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided agencyIds.
    *
@@ -80,7 +82,6 @@ public class AgencyService {
         .map(this::convertToAgencyResponseDTO)
         .toList();
   }
-
 
   /**
    * Returns a list of {@link AgencyResponseDTO} which match the provided consulting type.
@@ -101,7 +102,6 @@ public class AgencyService {
           String.format("Consulting type with id %s does not exist", consultingTypeId));
     }
   }
-
 
   public List<FullAgencyResponseDTO> getAgencies(Optional<String> postCode, int consultingTypeId,
       Optional<Integer> topicId) {
@@ -128,7 +128,6 @@ public class AgencyService {
       return Collections.emptyList();
     }
 
-
     var agencies = findAgencies(postCode, getConsultingTypeIdForSearch(consultingTypeId), topicId,
         age, gender, counsellingRelation);
     Collections.shuffle(agencies);
@@ -145,6 +144,18 @@ public class AgencyService {
     return mutableResponseDTO;
   }
 
+  public List<FullAgencyResponseDTO> getAgencies(String postCode, Integer topicId) {
+
+    var agencies = findAgenciesForCurrentTenant(postCode, topicId);
+    return agencies.stream()
+        .map(this::convertToFullAgencyResponseDTO)
+        .toList();
+  }
+
+  public List<Integer> getAgenciesTopics() {
+    return agencyRepository.findAllAgenciesTopics(TenantContext.getCurrentTenant());
+  }
+
   private Optional<Integer> getConsultingTypeIdForSearch(int consultingTypeId) {
     return multitenancyWithSingleDomain ? Optional.empty() : Optional.of(consultingTypeId);
   }
@@ -153,14 +164,8 @@ public class AgencyService {
       Optional<Integer> optionalTopicId, Optional<Integer> age,
       Optional<String> gender, Optional<String> counsellingRelation) {
 
-    AgencySearch agencySearch = AgencySearch.builder()
-        .postCode(postCode)
-        .consultingTypeId(consultingTypeId)
-        .topicId(optionalTopicId)
-        .age(age)
-        .gender(gender)
-        .counsellingRelation(counsellingRelation)
-        .build();
+    AgencySearch agencySearch = buildAgencySearch(postCode,
+        consultingTypeId, optionalTopicId, age, gender, counsellingRelation);
 
     if (demographicsFeatureEnabled) {
       assertAgeAndGenderAreProvided(age, gender);
@@ -185,8 +190,30 @@ public class AgencyService {
               TenantContext.getCurrentTenant());
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting postcodes");
+          DB_POSTCODES_ERROR);
     }
+  }
+
+  private List<Agency> findAgenciesForCurrentTenant(String postCode, Integer topicId) {
+
+    AgencySearch agencySearch = buildAgencySearch(Optional.of(postCode),
+        Optional.empty(), Optional.of(topicId), Optional.empty(),
+        Optional.empty(), Optional.empty());
+
+    return findAgenciesWithTopicForCurrentTenant(agencySearch);
+  }
+
+  private static AgencySearch buildAgencySearch(Optional<String> postCode,
+      Optional<Integer> consultingTypeId, Optional<Integer> optionalTopicId, Optional<Integer> age,
+      Optional<String> gender, Optional<String> counsellingRelation) {
+    return AgencySearch.builder()
+        .postCode(postCode)
+        .consultingTypeId(consultingTypeId)
+        .topicId(optionalTopicId)
+        .age(age)
+        .gender(gender)
+        .counsellingRelation(counsellingRelation)
+        .build();
   }
 
   private void assertTopicIdIsProvided(Optional<Integer> topicId) {
@@ -249,7 +276,23 @@ public class AgencyService {
 
     } catch (DataAccessException ex) {
       throw new InternalServerErrorException(LogService::logDatabaseError,
-          "Database error while getting postcodes");
+          DB_POSTCODES_ERROR);
+    }
+  }
+
+  private List<Agency> findAgenciesWithTopicForCurrentTenant(AgencySearch agencySearch) {
+    try {
+      return agencyRepository
+          .searchWithTopic(agencySearch.getPostCode().orElse(null), agencySearch.getPostCode().orElse("").length(),
+              agencySearch.getConsultingTypeId().orElse(null),
+              agencySearch.getTopicId().orElseThrow(),
+              agencySearch.getAge().orElse(null), agencySearch.getGender().orElse(null),
+              agencySearch.getCounsellingRelation().orElse(null),
+              TenantContext.getCurrentTenant());
+
+    } catch (DataAccessException ex) {
+      throw new InternalServerErrorException(LogService::logDatabaseError,
+          DB_POSTCODES_ERROR);
     }
   }
 

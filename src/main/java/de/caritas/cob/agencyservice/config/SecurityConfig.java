@@ -79,16 +79,17 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and().authorizeRequests()
-        .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()
         .requestMatchers(HttpMethod.GET, "/agencyadmin/agencies")
         .hasAuthority(AuthorityValue.SEARCH_AGENCIES)
+        .requestMatchers("/agencies/by-tenant").hasAuthority(AuthorityValue.SEARCH_AGENCIES_WITHIN_TENANT)
         .requestMatchers("/agencyadmin/agencies/tenant/*")
         .access("hasAuthority('" + AuthorityValue.AGENCY_ADMIN
             + "') and hasAuthority('" + AuthorityValue.TENANT_ADMIN + "')")
         .requestMatchers("/agencyadmin", "/agencyadmin/", "/agencyadmin/**")
         .hasAnyAuthority(AuthorityValue.AGENCY_ADMIN, AuthorityValue.RESTRICTED_AGENCY_ADMIN)
+        .requestMatchers("/agencies/**").permitAll()
         .anyRequest().denyAll();
 
 

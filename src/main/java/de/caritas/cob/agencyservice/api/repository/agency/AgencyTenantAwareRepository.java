@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -50,6 +49,13 @@ public interface AgencyTenantAwareRepository extends JpaRepository<Agency, Long>
       @Param(value = "gender") String gender,
       @Param(value = "counselling_relation") String counsellingRelation,
       Long tenantId);
+
+  @Query(
+      value = SELECT_ALL_AGENCIES_TOPICS
+          + AND_A_TENANT_ID_FILTER
+          + ORDER_BY_TOPIC,
+      nativeQuery = true)
+  List<Integer> findAllAgenciesTopics(Long tenantId);
 
   @Query("select a from Agency as a where a.id = :agencyId ")
   Optional<Agency> findById(Long agencyId);
