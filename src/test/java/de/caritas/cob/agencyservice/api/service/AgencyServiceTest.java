@@ -341,7 +341,7 @@ public class AgencyServiceTest {
   @Test
   public void getAgenciesTopics_Should_ReturnListOfTopicIds_When_topicsExist() {
 
-    when(agencyRepository.findAllAgenciesTopics())
+    when(agencyRepository.findAllAgenciesTopics(TenantContext.getCurrentTenant()))
         .thenReturn(TOPIC_ID_LIST);
 
     Integer result = agencyService.getAgenciesTopics().get(0);
@@ -352,7 +352,7 @@ public class AgencyServiceTest {
   @Test
   public void getAgenciesTopics_Should_ReturnEmptyListOfTopicIds_When_topicsDontExist() {
 
-    when(agencyRepository.findAllAgenciesTopics())
+    when(agencyRepository.findAllAgenciesTopics(TenantContext.getCurrentTenant()))
         .thenReturn(new ArrayList<>());
 
     List<Integer> result = agencyService.getAgenciesTopics();

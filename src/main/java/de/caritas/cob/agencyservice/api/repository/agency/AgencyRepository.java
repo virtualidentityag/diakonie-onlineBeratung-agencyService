@@ -89,7 +89,7 @@ public interface AgencyRepository extends JpaRepository<Agency, Long> {
       value = SELECT_ALL_AGENCIES_TOPICS
           + ORDER_BY_TOPIC,
       nativeQuery = true)
-  List<Integer> findAllAgenciesTopics();
+  List<Integer> findAllAgenciesTopics(Long tenantId);
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 

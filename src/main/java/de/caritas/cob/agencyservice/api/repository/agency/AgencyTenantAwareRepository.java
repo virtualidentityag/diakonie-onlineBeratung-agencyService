@@ -55,7 +55,7 @@ public interface AgencyTenantAwareRepository extends JpaRepository<Agency, Long>
           + AND_A_TENANT_ID_FILTER
           + ORDER_BY_TOPIC,
       nativeQuery = true)
-  List<Integer> findAllAgenciesTopics();
+  List<Integer> findAllAgenciesTopics(Long tenantId);
 
   @Query("select a from Agency as a where a.id = :agencyId ")
   Optional<Agency> findById(Long agencyId);
