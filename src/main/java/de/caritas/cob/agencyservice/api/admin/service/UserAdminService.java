@@ -88,8 +88,6 @@ public class UserAdminService {
     sortBy.setField(FieldEnum.LASTNAME);
     sortBy.setOrder(OrderEnum.ASC);
 
-    return controllerApi
-        .getConsultants(currentPage, perPage, consultantFilter, sortBy)
-        .getEmbedded();
+    return controllerApi.getAgencyConsultants(String.valueOf(agencyId)).getEmbedded();
   }
 }
