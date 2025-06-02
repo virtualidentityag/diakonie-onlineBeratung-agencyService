@@ -115,7 +115,7 @@ class AgencyOfflineStatusValidatorTest {
         .thenReturn(numberOfAgencyPostcodeRanges);
     when(agencyRepository.findById(validateAgencyDto.getId()))
         .thenReturn(Optional.of(agency));
-    lenient().when(this.userAdminService.getConsultantsOfAgency(anyLong(), anyInt(), anyInt()))
+    lenient().when(this.userAdminService.getConsultantsOfAgency(anyLong()))
         .thenReturn(assignedConsultants);
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 
@@ -141,7 +141,7 @@ class AgencyOfflineStatusValidatorTest {
         .thenReturn(numberOfAgencyPostcodeRanges);
     when(agencyRepository.findById(validateAgencyDto.getId()))
         .thenReturn(Optional.of(AGENCY_SUCHT));
-    lenient().when(this.userAdminService.getConsultantsOfAgency(anyLong(), anyInt(), anyInt()))
+    lenient().when(this.userAdminService.getConsultantsOfAgency(anyLong()))
         .thenReturn(assignedConsultants);
     when(consultingTypeManager.getConsultingTypeSettings(anyInt())).thenReturn(consultingTypeSettings);
 

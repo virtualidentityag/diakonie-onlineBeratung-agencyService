@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DeleteAgencyValidator {
   private final @NonNull UserAdminService userAdminService;
-  private static final int FIRST_PAGE = 1;
-  private static final int PER_PAGE = 1;
 
   /**
    * Checks if agency is existing, is no Kreuzbund agency and has no assigned consultants.
@@ -32,7 +30,7 @@ public class DeleteAgencyValidator {
 
   private void checkIfAgencyHasAssignedConsultants(Agency agency) {
     List<ConsultantAdminResponseDTO> consultantList =
-        this.userAdminService.getConsultantsOfAgency(agency.getId(), FIRST_PAGE, PER_PAGE);
+        this.userAdminService.getConsultantsOfAgency(agency.getId());
 
     if (!consultantList.isEmpty()) {
       throw new ConflictException(AGENCY_CONTAINS_CONSULTANTS);
