@@ -167,7 +167,7 @@ public class AgencyValidatorIT {
     return updateAgencyDTO;
   }
 
-  private void setupTenantServiceApiWithFeatureCentralDataProtectionTemplateEnabled(){
+  private void setupTenantServiceApiWithFeatureCentralDataProtectionTemplateEnabled() {
     Settings settings = new Settings();
     settings.setFeatureCentralDataProtectionTemplateEnabled(true);
     RestrictedTenantDTO restrictedTenantDTO = new RestrictedTenantDTO();
