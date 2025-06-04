@@ -88,7 +88,7 @@ public class AgencyOfflineStatusValidator implements ConcreteAgencyValidator {
   }
 
   private boolean hasNoConsultant(ValidateAgencyDTO validateAgencyDto) {
-    return this.userAdminService.getConsultantsOfAgency(validateAgencyDto.getId(), 1, 1)
+    return this.userAdminService.getConsultantsOfAgency(validateAgencyDto.getId())
         .isEmpty();
   }
 }
