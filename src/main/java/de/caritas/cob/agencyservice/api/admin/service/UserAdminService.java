@@ -5,24 +5,16 @@ import de.caritas.cob.agencyservice.api.service.securityheader.SecurityHeaderSup
 import de.caritas.cob.agencyservice.config.apiclient.UserAdminServiceApiControllerFactory;
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AdminAgencyResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO.AgencyTypeEnum;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantAdminResponseDTO;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.FieldEnum;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.OrderEnum;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AdminResponseDTO;
 
 @Service
@@ -74,22 +66,12 @@ public class UserAdminService {
    * Returns a list of {@link ConsultantAdminResponseDTO} for the provided agency ID.
    *
    * @param agencyId    agency ID
-   * @param currentPage Number of page where to start in the query
-   * @param perPage     Number of items which are being returned per page
    * @return list of {@link ConsultantAdminResponseDTO}
    */
-  public List<ConsultantAdminResponseDTO> getConsultantsOfAgency(Long agencyId, int currentPage,
-      int perPage) {
+  public List<ConsultantAdminResponseDTO> getConsultantsOfAgency(Long agencyId) {
     var controllerApi = userAdminServiceApiControllerFactory.createControllerApi();
     addDefaultHeaders(controllerApi.getApiClient());
-    ConsultantFilter consultantFilter = new ConsultantFilter().agencyId(agencyId);
 
-    Sort sortBy = new Sort();
-    sortBy.setField(FieldEnum.LASTNAME);
-    sortBy.setOrder(OrderEnum.ASC);
-
-    return controllerApi
-        .getConsultants(currentPage, perPage, consultantFilter, sortBy)
-        .getEmbedded();
+    return controllerApi.getAgencyConsultants(String.valueOf(agencyId)).getEmbedded();
   }
 }

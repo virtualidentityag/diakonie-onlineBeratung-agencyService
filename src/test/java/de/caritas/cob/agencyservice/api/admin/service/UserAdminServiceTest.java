@@ -3,7 +3,6 @@ package de.caritas.cob.agencyservice.api.admin.service;
 import static de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO.AgencyTypeEnum.TEAM_AGENCY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,8 +14,7 @@ import de.caritas.cob.agencyservice.config.apiclient.UserAdminServiceApiControll
 import de.caritas.cob.agencyservice.useradminservice.generated.ApiClient;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.AdminUserControllerApi;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyTypeDTO;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantFilter;
-import de.caritas.cob.agencyservice.useradminservice.generated.web.model.ConsultantSearchResultDTO;
+import de.caritas.cob.agencyservice.useradminservice.generated.web.model.AgencyConsultantResponseDTO;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.FieldEnum;
 import de.caritas.cob.agencyservice.useradminservice.generated.web.model.Sort.OrderEnum;
@@ -76,15 +74,12 @@ public class UserAdminServiceTest {
   @Test
   public void getConsultantsOfAgency_Should_callServicesCorrectly() {
     Long agencyId = 1L;
-    int currentPage = 1;
-    int perPage = 1;
-    when(this.adminUserControllerApi.getConsultants(any(), any(), any(), any()))
-        .thenReturn(new EasyRandom().nextObject(ConsultantSearchResultDTO.class));
-    this.userAdminService.getConsultantsOfAgency(agencyId, currentPage, perPage);
+    when(this.adminUserControllerApi.getAgencyConsultants(any()))
+        .thenReturn(new EasyRandom().nextObject(AgencyConsultantResponseDTO.class));
+    this.userAdminService.getConsultantsOfAgency(agencyId);
 
     verify(this.adminUserControllerApi, times(1))
-        .getConsultants(eq(currentPage), eq(perPage),
-            eq(new ConsultantFilter().agencyId(agencyId)), any());
+        .getAgencyConsultants(String.valueOf(agencyId));
     verify(this.apiClient, times(this.httpHeaders.size())).addDefaultHeader(any(), any());
   }
 
