@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.12.1](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/compare/v1.12.0...v1.12.1) (2025-06-11)
+
+
+### Bug Fixes
+
+* actions cache version ([5fd970e](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/5fd970e53447b6f031d5890c51a709aae1811751))
+* bump actions upload artifact version ([b6f2169](https://github.com/CaritasDeutschland/caritas-onlineBeratung-agencyService/commit/b6f2169680a1e34d5a974d63a8a1f9504bb193e6))
+
 ## 1.12.0 (2024-05-13)
 
 
