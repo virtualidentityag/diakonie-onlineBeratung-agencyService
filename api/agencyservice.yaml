@@ -137,9 +137,55 @@ paths:
           description: FORBIDDEN - no/invalid CSRF token
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
+  /agencies/{agencyId}/registration-url:
+    put:
+      tags:
+        - agency-controller
+      summary: 'Sets/updates the shared registration redirect URL of an agency.
+        Intended to be called by the userService after it has verified that the requesting
+        consultant is assigned to the agency. [Authorization: Consultant]'
+      operationId: setAgencyRegistrationUrl
+      parameters:
+        - name: agencyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 20
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/RegistrationUrlDTO'
+      responses:
+        204:
+          description: NO CONTENT - successfully updated (a null/blank url removes the override)
+        400:
+          description: BAD REQUEST - invalid url (must be an https URL on diakonie.de)
+        403:
+          description: FORBIDDEN - no/invalid CSRF token
+        404:
+          description: NOT FOUND - agency does not exist
+        500:
+          description: INTERNAL SERVER ERROR - server encountered unexpected condition
 
 components:
   schemas:
+    RegistrationUrlDTO:
+      type: object
+      properties:
+        registrationUrl:
+          type: string
+          maxLength: 500
+          description: "The registration redirect URL. Must be an https URL on the domain
+            diakonie.de (or a subdomain of it). Null or empty removes the override."
+          example: "https://www.diakonie.de/registration/agency"
+        addedBy:
+          type: string
+          maxLength: 36
+          description: "Consultant id (UUID) that set the URL, forwarded by the userService"
     AgencyResponseDTO:
       type: object
       properties:
@@ -182,6 +228,10 @@ components:
         agencyLogo:
           type: string
           example: "base64 encoded image"
+        registrationUrl:
+          type: string
+          description: "Shared registration redirect URL, or null if none set"
+          example: "https://www.diakonie.de/registration/agency"
 
     FullAgencyResponseDTO:
       type: object

@@ -4,6 +4,7 @@ import static java.util.Optional.ofNullable;
 
 import de.caritas.cob.agencyservice.api.model.AgencyResponseDTO;
 import de.caritas.cob.agencyservice.api.model.FullAgencyResponseDTO;
+import de.caritas.cob.agencyservice.api.model.RegistrationUrlDTO;
 import de.caritas.cob.agencyservice.api.service.AgencyService;
 import de.caritas.cob.agencyservice.generated.api.controller.AgenciesApi;
 import io.swagger.annotations.Api;
@@ -83,5 +84,24 @@ public class AgencyController implements AgenciesApi {
     var agencies = this.agencyService.getAgencies(consultingTypeId);
 
     return new ResponseEntity<>(agencies, HttpStatus.OK);
+  }
+
+  /**
+   * Sets, updates or removes the shared registration redirect URL of an agency.
+   * Membership of the requesting consultant is verified upstream in the userService. A {@code
+   * null}/blank URL removes the override while still recording who removed it and when.
+   *
+   * @param agencyId           the agency to update
+   * @param registrationUrlDTO the new URL (and the consultant id that set/removed it)
+   * @return 204 No Content
+   */
+  @Override
+  public ResponseEntity<Void> setAgencyRegistrationUrl(
+      @PathVariable("agencyId") Long agencyId, RegistrationUrlDTO registrationUrlDTO) {
+
+    this.agencyService.setRegistrationUrl(
+        agencyId, registrationUrlDTO.getRegistrationUrl(), registrationUrlDTO.getAddedBy());
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
