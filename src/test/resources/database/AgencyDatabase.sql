@@ -33,6 +33,9 @@ create table AGENCY
     DATA_PROTECTION_OFFICER_CONTACT longtext null default null,
     DATA_PROTECTION_ALTERNATIVE_CONTACT longtext null default null,
     AGENCY_LOGO longtext null default null,
+    REGISTRATION_URL             varchar(500) null default null,
+    REGISTRATION_URL_ADDED_BY    varchar(36)  null default null,
+    REGISTRATION_URL_ADDED_DATE  timestamp    null default null,
     primary key (ID)
 );
 CREATE SEQUENCE SEQUENCE_AGENCY
