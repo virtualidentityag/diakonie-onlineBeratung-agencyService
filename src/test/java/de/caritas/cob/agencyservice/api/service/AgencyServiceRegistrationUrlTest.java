@@ -3,6 +3,7 @@ package de.caritas.cob.agencyservice.api.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /** tests for the registration url handling of {@link AgencyService}. */
 @ExtendWith(MockitoExtension.class)
@@ -106,6 +108,20 @@ class AgencyServiceRegistrationUrlTest {
     assertThrows(
         NotFoundException.class,
         () -> agencyService.setRegistrationUrl(AGENCY_ID, VALID_REGISTRATION_URL, CONSULTANT_ID));
+  }
+
+  @Test
+  void setRegistrationUrl_Should_loadAgencyTenantUnaware_When_multitenancyWithSingleDomain() {
+    AgencyRepository agencyTenantUnawareRepository = mock(AgencyRepository.class);
+    ReflectionTestUtils.setField(
+        agencyService, "agencyTenantUnawareRepository", agencyTenantUnawareRepository);
+    ReflectionTestUtils.setField(agencyService, "multitenancyWithSingleDomain", true);
+    when(agencyTenantUnawareRepository.findById(AGENCY_ID)).thenReturn(Optional.of(new Agency()));
+
+    agencyService.setRegistrationUrl(AGENCY_ID, VALID_REGISTRATION_URL, CONSULTANT_ID);
+
+    verify(agencyRepository, never()).findById(any());
+    assertThat(captureSavedAgency().getRegistrationUrl()).isEqualTo(VALID_REGISTRATION_URL);
   }
 
   private Agency captureSavedAgency() {

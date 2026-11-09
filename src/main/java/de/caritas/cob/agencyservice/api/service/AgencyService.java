@@ -349,7 +349,8 @@ public class AgencyService {
         .demographics(getDemographics(agency))
         .tenantId(agency.getTenantId())
         .topicIds(agency.getAgencyTopics().stream().map(AgencyTopic::getTopicId).toList())
-        .agencyLogo(agency.getAgencyLogo());
+        .agencyLogo(agency.getAgencyLogo())
+        .registrationUrl(agency.getRegistrationUrl());
 
   }
 
@@ -390,7 +391,9 @@ public class AgencyService {
     if (!isRemoval) {
       validateRegistrationUrl(registrationUrl);
     }
-    var agency = this.agencyRepository.findById(agencyId)
+    // in single domain multitenancy the tenant of the request is the main tenant, so the agency
+    // must be loaded tenant-unaware, otherwise agencies of all other tenants are not found
+    var agency = getAgencyRepositoryForSearch().findById(agencyId)
         .orElseThrow(NotFoundException::new);
     agency.setRegistrationUrl(isRemoval ? null : registrationUrl.trim());
     // record who last set/removed the URL and when, also on removal.
