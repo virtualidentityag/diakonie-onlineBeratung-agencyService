@@ -172,6 +172,8 @@ paths:
           description: NOT FOUND - agency does not exist
         500:
           description: INTERNAL SERVER ERROR - server encountered unexpected condition
+      security:
+        - Bearer: [ ]
 
 components:
   schemas:
