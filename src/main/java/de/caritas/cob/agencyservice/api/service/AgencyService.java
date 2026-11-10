@@ -384,9 +384,13 @@ public class AgencyService {
    * @param agencyId        the agency to update
    * @param registrationUrl the new URL, or {@code null}/blank to remove the override
    * @param addedBy         the consultant id (UUID) that set/removed the URL, forwarded by the
-   *                        userService
+   *                        userService; must not be blank
    */
   public void setRegistrationUrl(Long agencyId, String registrationUrl, String addedBy) {
+    // a blank attribution would overwrite who last set/removed the URL
+    if (addedBy == null || addedBy.isBlank()) {
+      throw new BadRequestException("addedBy must not be blank");
+    }
     var isRemoval = registrationUrl == null || registrationUrl.isBlank();
     if (!isRemoval) {
       validateRegistrationUrl(registrationUrl);

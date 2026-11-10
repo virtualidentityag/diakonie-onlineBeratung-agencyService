@@ -79,6 +79,10 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and().authorizeRequests()
+        // must precede the public /agencies/** rule: only the userService (technical user) may
+        // change an agency's registration redirect URL, after verifying consultant membership
+        .requestMatchers(HttpMethod.PUT, "/agencies/*/registration-url")
+        .hasAuthority(AuthorityValue.TECHNICAL_DEFAULT)
         .requestMatchers("/agencies/**").permitAll()
         .requestMatchers(WHITE_LIST).permitAll()
         .requestMatchers("/agencies").permitAll()

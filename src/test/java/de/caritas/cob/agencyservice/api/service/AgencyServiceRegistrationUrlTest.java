@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -82,6 +83,17 @@ class AgencyServiceRegistrationUrlTest {
     assertThrows(
         BadRequestException.class,
         () -> agencyService.setRegistrationUrl(AGENCY_ID, url, CONSULTANT_ID));
+
+    verify(agencyRepository, never()).save(any());
+  }
+
+  @ParameterizedTest
+  @NullAndEmptySource
+  @ValueSource(strings = {"  "})
+  void setRegistrationUrl_Should_throwBadRequest_When_addedByIsBlank(String addedBy) {
+    assertThrows(
+        BadRequestException.class,
+        () -> agencyService.setRegistrationUrl(AGENCY_ID, VALID_REGISTRATION_URL, addedBy));
 
     verify(agencyRepository, never()).save(any());
   }

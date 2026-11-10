@@ -225,7 +225,11 @@ public class AgencyAdminService {
         .updateDate(LocalDateTime.now(ZoneOffset.UTC))
         .counsellingRelations(agency.getCounsellingRelations())
         .deleteDate(agency.getDeleteDate())
-        .agencyLogo(updateAgencyDTO.getAgencyLogo());
+        .agencyLogo(updateAgencyDTO.getAgencyLogo())
+        // the registration redirect is managed by consultants, not via the admin update: keep it
+        .registrationUrl(agency.getRegistrationUrl())
+        .registrationUrlAddedBy(agency.getRegistrationUrlAddedBy())
+        .registrationUrlAddedDate(agency.getRegistrationUrlAddedDate());
 
     dataProtectionConverter.convertToEntity(updateAgencyDTO.getDataProtection(), agencyBuilder);
 

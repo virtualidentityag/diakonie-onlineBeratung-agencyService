@@ -176,6 +176,7 @@ public class AgencyServiceTest {
     var registrationUrl = "https://www.diakonie.de/registration/agency";
     var agency = Agency.builder()
         .id(AGENCY_ID)
+        .name("Agency")
         .postCode(VALID_POSTCODE)
         .consultingTypeId(CONSULTING_TYPE_SUCHT)
         .agencyTopics(Collections.emptyList())

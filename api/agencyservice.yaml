@@ -143,7 +143,7 @@ paths:
         - agency-controller
       summary: 'Sets/updates the shared registration redirect URL of an agency.
         Intended to be called by the userService after it has verified that the requesting
-        consultant is assigned to the agency. [Authorization: Consultant]'
+        consultant is assigned to the agency. [Authorization: technical user]'
       operationId: setAgencyRegistrationUrl
       parameters:
         - name: agencyId
@@ -164,8 +164,10 @@ paths:
           description: NO CONTENT - successfully updated (a null/blank url removes the override)
         400:
           description: BAD REQUEST - invalid url (must be an https URL on diakonie.de)
+        401:
+          description: UNAUTHORIZED - no/invalid Keycloak token
         403:
-          description: FORBIDDEN - no/invalid CSRF token
+          description: FORBIDDEN - no/invalid CSRF token or caller is not the technical user
         404:
           description: NOT FOUND - agency does not exist
         500:
@@ -175,6 +177,8 @@ components:
   schemas:
     RegistrationUrlDTO:
       type: object
+      required:
+        - addedBy
       properties:
         registrationUrl:
           type: string
@@ -184,8 +188,10 @@ components:
           example: "https://www.diakonie.de/registration/agency"
         addedBy:
           type: string
+          minLength: 1
           maxLength: 36
-          description: "Consultant id (UUID) that set the URL, forwarded by the userService"
+          description: "Consultant id (UUID) that set/removed the URL, forwarded by the userService.
+            Required, so the attribution can not be overwritten with an empty value."
     AgencyResponseDTO:
       type: object
       properties:
