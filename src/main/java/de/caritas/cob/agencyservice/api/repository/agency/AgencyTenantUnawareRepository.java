@@ -40,6 +40,9 @@ public interface AgencyTenantUnawareRepository extends JpaRepository<Agency, Lon
 
   Optional<Agency> findByIdAndDeleteDateNull(Long agencyId);
 
+  // redeclared so TenantAspect sees @TenantUnaware on the declaring type and skips the tenant filter
+  Optional<Agency> findById(Long agencyId);
+
   List<Agency> findByIdIn(List<Long> agencyIds);
 
   List<Agency> findByConsultingTypeId(int consultingTypeId);

@@ -65,7 +65,8 @@ jobs:
   push_to_registry:
     strategy:
       matrix:
-        registry: ["docker.pkg.github.com", "ghcr.io"]
+        # docker.pkg.github.com (legacy) rejects pushes with 401; clusters only pull from ghcr.io
+        registry: ["ghcr.io"]
     needs: [test]
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest

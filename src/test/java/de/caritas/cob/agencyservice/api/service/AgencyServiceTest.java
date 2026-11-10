@@ -171,6 +171,30 @@ public class AgencyServiceTest {
   }
 
   @Test
+  public void getListOfAgencies_Should_ReturnRegistrationUrl_WhenAgencyHasRegistrationUrl()
+      throws MissingConsultingTypeException {
+    var registrationUrl = "https://www.diakonie.de/registration/agency";
+    var agency = Agency.builder()
+        .id(AGENCY_ID)
+        .name("Agency")
+        .postCode(VALID_POSTCODE)
+        .consultingTypeId(CONSULTING_TYPE_SUCHT)
+        .agencyTopics(Collections.emptyList())
+        .registrationUrl(registrationUrl)
+        .build();
+    when(agencyRepository.searchWithoutTopic(VALID_POSTCODE, VALID_POSTCODE_LENGTH,
+        CONSULTING_TYPE_SUCHT, AGE, GENDER, COUNSELLING_RELATION, TENANT_ID))
+        .thenReturn(Collections.singletonList(agency));
+    when(consultingTypeManager.getConsultingTypeSettings(Mockito.anyInt()))
+        .thenReturn(CONSULTING_TYPE_SETTINGS_WITH_WHITESPOT_AGENCY);
+
+    var result = agencyService.getAgencies(Optional.of(VALID_POSTCODE), CONSULTING_TYPE_SUCHT,
+        Optional.empty());
+
+    assertThat(result).extracting("registrationUrl").containsExactly(registrationUrl);
+  }
+
+  @Test
   public void getListOfAgencies_Should_ReturnWhiteSpotAgency_WhenNoAgencyFoundForGivenPostcodeAndAgencyHasSetWhiteSpotAgency()
       throws MissingConsultingTypeException {
 

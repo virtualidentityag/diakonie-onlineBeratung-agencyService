@@ -38,4 +38,11 @@ public class AuthorityTest {
     assertThat(authority.getAuthorities()).containsOnly(AuthorityValue.AGENCY_ADMIN, AuthorityValue.SEARCH_AGENCIES);
   }
 
+  @Test
+  public void fromRoleName_Should_returnTechnical_When_roleNameIsTechnical() {
+    Authority authority = fromRoleName("technical");
+
+    assertThat(authority.getAuthorities()).containsOnly(AuthorityValue.TECHNICAL_DEFAULT);
+  }
+
 }

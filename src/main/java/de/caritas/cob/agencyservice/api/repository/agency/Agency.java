@@ -156,6 +156,17 @@ public class Agency implements TenantAware {
   @Column(name = "agency_logo")
   private String agencyLogo;
 
+  @Size(max = 500)
+  @Column(name = "registration_url")
+  private String registrationUrl;
+
+  @Size(max = 36)
+  @Column(name = "registration_url_added_by")
+  private String registrationUrlAddedBy;
+
+  @Column(name = "registration_url_added_date")
+  private LocalDateTime registrationUrlAddedDate;
+
   @Transient
   public boolean hasAnyDemographicsAttributes() {
     return getAgeTo() != null || getAgeFrom() != null || getGenders() != null;
